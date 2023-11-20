@@ -30,7 +30,7 @@ function getSnapshots()
     local snapNames = fs.list(folder)
     local snaps = {}
     for _, name in ipairs(snapNames) do
-        local snapData = {}--io.lines(folder .. name)
+        local snapData = io.lines(folder .. name)
         local supplierName = snapData.remove()
         print(supplierName)
         local snapObject = {
