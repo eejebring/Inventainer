@@ -21,7 +21,7 @@ function snapshot(invName, supplierName)
     for _, value in pairs(snapshot) do
         io.write(value.name .. "\n")
     end
-    io.write(invName)
+    io.write(invName .. "\n")
     io.write(supplierName)
 
     io.close()
@@ -57,7 +57,8 @@ function healthCheck(inv, slotsTemplate)
     local invSlots = inv.list()
 
     for i = 1, inv.size(), 1 do
-        if not invSlots[i].name == slotsTemplate[i] then
+        if (not invSlots[i] == slotsTemplate[i]) or 
+        (not invSlots[i].name == slotsTemplate[i]) then
             table.insert(faults, key)
         end
     end
@@ -75,6 +76,11 @@ function maintain()
         local supplier = peripheral.wrap(snap.supplier)
 
         local faults = healthCheck(inv, snap)
+        if not faults == nil then
+            for _, value in ipairs(faults) do
+                print(value)
+            end
+        end
     end
 end
 
