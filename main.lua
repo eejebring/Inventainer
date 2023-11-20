@@ -19,7 +19,7 @@ function snapshot(peripheralName, supplierName)
     table.insert(snapshot, supplierName)
     io.output(folder .. peripheralName)
     
-    for value in snapshot do
+    for _, value in pairs(snapshot) do
         io.write(value.name .. "\n")
     end
 
