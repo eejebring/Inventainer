@@ -1,4 +1,4 @@
-local folder = "inventainer/inv/"
+local folder = "Inventainer/inv/"
 
 function snapshot(peripheralName, supplierName)
 
@@ -16,12 +16,12 @@ function snapshot(peripheralName, supplierName)
 
     local snapshot = newPeripheral.list()
 
-    table.insert(snapshot, supplierName)
     io.output(folder .. peripheralName)
     
     for _, value in pairs(snapshot) do
         io.write(value.name .. "\n")
     end
+    io.write(supplierName)
 
     io.close()
 end
