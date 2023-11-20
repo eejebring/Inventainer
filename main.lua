@@ -41,7 +41,6 @@ function getSnapshots()
     for _, name in ipairs(snapNames) do
         local snapData = readLines(name)
         local supplierName = table.remove(snapData)
-        print(supplierName)
         local snapObject = {
             ["name"] = name,
             ["supplier"] = supplierName,
@@ -54,6 +53,9 @@ end
 
 function maintain()
     local snapshots = getSnapshots()
+    for key, value in ipairs(snapshots) do
+        print(key, ": ", value)
+    end
 end
 
 function main()
