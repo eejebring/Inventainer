@@ -51,10 +51,29 @@ function getSnapshots()
     return snaps
 end
 
+function healthCheck(inv, slotsTemplate) 
+    local faults = {}
+    local invSlots = inv.list()
+
+    for i = 1, inv.size(), 1 do
+        if not invSlots[i].name == slotsTemplate[i] then
+            table.insert(faults, key)
+        end
+    end
+end
+
 function maintain()
     local snapshots = getSnapshots()
-    for key, value in ipairs(snapshots) do
-        print(key, ": ", value)
+    for _, x in ipairs(snapshots) do
+        for key, y in pairs(x) do
+            print(key, ": ", y)
+        end
+    end
+    for _, snap in ipairs(snapshots) do
+        local inv = peripheral.wrap(snap.name)
+        local supplier = peripheral.wrap(snap.supplier)
+
+        local faults = healthCheck(inv, snap)
     end
 end
 
