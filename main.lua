@@ -30,7 +30,7 @@ function readLines(name)
     local lineList = {}
     for line in io.lines(folder .. name) do
         print(line)
-        lineList.insert(line)
+        table.insert(lineList, line)
     end
     return lineList
 end
