@@ -40,7 +40,7 @@ function getSnapshots()
     local snaps = {}
     for _, name in ipairs(snapNames) do
         local snapData = readLines(name)
-        local supplierName = snapData.remove()
+        local supplierName = table.remove(snapData)
         print(supplierName)
         local snapObject = {
             ["name"] = name,
