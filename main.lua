@@ -57,10 +57,16 @@ function healthCheck(inv, slotsTemplate)
     local invSlots = inv.list()
 
     for i = 1, inv.size(), 1 do
-        if (not invSlots[i] == slotsTemplate[i]) or 
-        (not invSlots[i].name == slotsTemplate[i]) then
-            table.insert(faults, key)
+        if invSlots[i] == nil and slotsTemplate[i] == nil then
+            goto continue
         end
+        if not invSlots[i] == nil then
+            if invSlots[i].name == slotsTemplate[i] then
+                goto continue
+            end
+        end
+        table.insert(faults, key)
+        ::continue::
     end
 end
 
