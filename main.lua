@@ -26,11 +26,20 @@ function snapshot(peripheralName, supplierName)
     io.close()
 end
 
+function readLines(name)
+    local lineList = {}
+    for line in io.lines(folder .. name) do
+        print(line)
+        lineList.insert(line)
+    end
+    return lineList
+end
+
 function getSnapshots()
     local snapNames = fs.list(folder)
     local snaps = {}
     for _, name in ipairs(snapNames) do
-        local snapData = io.lines(folder .. name)
+        local snapData = readLines(name)
         local supplierName = snapData.remove()
         print(supplierName)
         local snapObject = {
