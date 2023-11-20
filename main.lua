@@ -1,8 +1,8 @@
 local folder = "Inventainer/inv/"
 
-function snapshot(peripheralName, supplierName)
+function snapshot(invName, supplierName)
 
-    local newPeripheral = peripheral.wrap(peripheralName)
+    local newPeripheral = peripheral.wrap(invName)
     if (newPeripheral == nil) then
         print("invalid peripheral")
         return
@@ -16,11 +16,12 @@ function snapshot(peripheralName, supplierName)
 
     local snapshot = newPeripheral.list()
 
-    io.output(folder .. peripheralName)
+    io.output(folder .. invName)
     
     for _, value in pairs(snapshot) do
         io.write(value.name .. "\n")
     end
+    io.write(invName)
     io.write(supplierName)
 
     io.close()
@@ -29,20 +30,20 @@ end
 function readLines(name)
     local lineList = {}
     for line in io.lines(folder .. name) do
-        print(line)
         table.insert(lineList, line)
     end
     return lineList
 end
 
 function getSnapshots()
-    local snapNames = fs.list(folder)
+    local fileNames = fs.list(folder)
     local snaps = {}
-    for _, name in ipairs(snapNames) do
-        local snapData = readLines(name)
+    for _, fileName in ipairs(fileNames) do
+        local snapData = readLines(fileName)
         local supplierName = table.remove(snapData)
+        local invName = table.remove(snapData)
         local snapObject = {
-            ["name"] = name,
+            ["name"] = invName,
             ["supplier"] = supplierName,
             ["slots"] = snapData
         }
