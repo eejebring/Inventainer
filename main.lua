@@ -26,8 +26,25 @@ function snapshot(peripheralName, supplierName)
     io.close()
 end
 
+function getSnapshots()
+    local snapNames = fs.list(folder)
+    local snaps = {}
+    for _, name in ipairs(snapNames) do
+        local snapData = {}--io.lines(folder .. name)
+        local supplierName = snapData.remove()
+        print(supplierName)
+        local snapObject = {
+            ["name"] = name,
+            ["supplier"] = supplierName,
+            ["slots"] = snapData
+        }
+        table.insert(snaps, snapObject)
+    end
+    return snaps
+end
+
 function maintain()
-    print(fs.list(folder))
+    local snapshots = getSnapshots()
 end
 
 function main()
