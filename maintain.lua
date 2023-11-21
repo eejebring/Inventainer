@@ -6,3 +6,4 @@ local function main()
         sleep(5)
     end
 end
+main()
