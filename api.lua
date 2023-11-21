@@ -111,11 +111,11 @@ local function fillSlot(slotNr, itemName, invName, supplier)
     end
 end
 
-local function fixInventory(faults, slotsTemplate, invName, supplier)
+local function fixInventory(faults, snap)
     for _, slot in ipairs(faults) do
         print(slot)
-        emptySlot(slot, invName, supplier)
-        fillSlot(slot, slotsTemplate[slot], invName, supplier)
+        emptySlot(slot, snap.name, snap.supplier)
+        fillSlot(slot, snap.slots[slot], snap.name, snap.supplier)
     end
 end
 
@@ -124,7 +124,7 @@ function FixAllInventories()
     for _, snap in ipairs(snapshots) do
         local faults = HealthCheck(snap.name, snap)
         if not faults == nil then
-            fixInventory(faults, snap, snap.name, snap.supplier)
+            fixInventory(faults, snap)
         end
     end
 end
