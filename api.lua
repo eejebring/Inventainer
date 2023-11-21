@@ -80,6 +80,8 @@ function HealthCheck(invName, slotsTemplate)
             table.insert(faults, i)
         end
     end
+
+    return faults
 end
 
 local function findSlotWith(itemName, invName)
@@ -113,7 +115,6 @@ end
 
 local function fixInventory(faults, snap)
     for _, slot in ipairs(faults) do
-        print(slot)
         emptySlot(slot, snap.name, snap.supplier)
         fillSlot(slot, snap.slots[slot], snap.name, snap.supplier)
     end
@@ -122,7 +123,7 @@ end
 function FixAllInventories()
     local snapshots = GetSnapshots()
     for _, snap in ipairs(snapshots) do
-        local faults = HealthCheck(snap.name, snap)
+        local faults = HealthCheck(snap.name, snap.slots)
         if not faults == nil then
             fixInventory(faults, snap)
         end
