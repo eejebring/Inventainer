@@ -14,4 +14,25 @@ Makes a snapshot of an inventory to later use as a template when maintaining the
 tries to make the inventories resemble the snapshots.
 
 # API
-## ToDo
+
+## FixAllInventories()
+tries to order all snapshoted inventories back to their snapshotted state.
+
+## HealthCheck(invName, slotsTemplate)
+Compairs an inventory against a template and returns all descrepencies.
+
+## GetSnapshots()
+Returns a table with data about all snapshoted inventories
+´´´
+{
+    {
+        name: --inventory name
+        supplier: --supplier inventory name
+        slots: --a snapshot of the inventory
+    },
+    ...
+}
+´´´
+
+## Snapshot(invName, supplierName)
+Saves an inventory and its layout (a snapshot) as a file in Inventainer/inv/
