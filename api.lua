@@ -1,6 +1,6 @@
 local folder = "Inventainer/inv/"
 
-function snapshot(invName, supplierName)
+function Snapshot(invName, supplierName)
 
     local newPeripheral = peripheral.wrap(invName)
     if (newPeripheral == nil) then
@@ -31,7 +31,7 @@ function snapshot(invName, supplierName)
     io.close()
 end
 
-function readLines(name)
+local function readLines(name)
     local lineList = {}
     for line in io.lines(folder .. name) do
         if line == "" then
@@ -43,7 +43,7 @@ function readLines(name)
     return lineList
 end
 
-function getSnapshots()
+function GetSnapshots()
     local fileNames = fs.list(folder)
     local snaps = {}
     for _, fileName in ipairs(fileNames) do
@@ -60,7 +60,7 @@ function getSnapshots()
     return snaps
 end
 
-function slotMatchTemplate(invSlot, slotTemplate)
+local function slotMatchTemplate(invSlot, slotTemplate)
     if invSlot == nil and slotTemplate == nil then
         return true
     end
@@ -70,8 +70,9 @@ function slotMatchTemplate(invSlot, slotTemplate)
     return invSlot.name == slotTemplate
 end
 
-function healthCheck(inv, slotsTemplate) 
+function HealthCheck(invName, slotsTemplate) 
     local faults = {}
+    local inv = peripheral.wrap(invName)
     local invSlots = inv.list()
 
     for i = 1, inv.size(), 1 do
@@ -81,7 +82,7 @@ function healthCheck(inv, slotsTemplate)
     end
 end
 
-function findSlotWith(itemName, invName)
+local function findSlotWith(itemName, invName)
     local inv = peripheral.wrap(invName)
     for slotNr, slot in pairs(inv.list()) do
         if slotMatchTemplate(slot, itemName) then
@@ -90,67 +91,40 @@ function findSlotWith(itemName, invName)
     end
 end
 
-function emptySlot(slotNr, inv, supplier)
+local function emptySlot(slotNr, invName, supplier)
+    local inv = peripheral.wrap(invName)
     if not inv.getItemDetail(slotNr) == nil then
         inv.pushItems(supplier, slotNr)
     end
 end
 
-function fillSlot(slotNr, itemName, inv, supplier)
-    inv.pullItems(
-        supplier,
-        findSlotWith(itemName, supplier),
-        1,
-        slotNr
-    )
+local function fillSlot(slotNr, itemName, invName, supplier)
+    local inv = peripheral.wrap(invName)
+    local supplierSlot = findSlotWith(itemName, supplier)
+    if not supplierSlot == nil then
+        inv.pullItems(
+            supplier,
+            supplierSlot,
+            1,
+            slotNr
+        )
+    end
 end
 
-function fixSlots(faults, slotsTemplate, inv, supplier)
+local function fixInventory(faults, slotsTemplate, invName, supplier)
     for _, slot in ipairs(faults) do
         print(slot)
-        --emptySlot(slot, inv, supplier)
-        --fillSlot(slot, slotsTemplate[slot], inv, supplier)
+        emptySlot(slot, invName, supplier)
+        fillSlot(slot, slotsTemplate[slot], invName, supplier)
     end
 end
 
-function maintain()
-    local snapshots = getSnapshots()
-    while true do
-        for _, snap in ipairs(snapshots) do
-            local inv = peripheral.wrap(snap.name)
-            --local supplier = peripheral.wrap(snap.supplier)
-    
-            local faults = healthCheck(inv, snap)
-            if not faults == nil then
-                fixSlots(faults, snap, inv, snap.supplier)
-            end
-        end
-        break
-    end
-end
-
-function main()
-    print("select an option:\n 1) new snapshot\n 2) maintain inventories\n")
-
-    local running = true
-    while running do
-        running = false
-        local action = read()
-
-        if action == "1" then
-            print("Enter peripheral name")
-            local peripheralName = read()
-            print("Enter supplier name")
-            local supplierName = read()
-            snapshot(peripheralName, supplierName)
-
-        elseif action == "2" then
-            maintain()
-
-        else
-            print("invalid option")
-            running = true
+function FixAllInventories()
+    local snapshots = GetSnapshots()
+    for _, snap in ipairs(snapshots) do
+        local faults = HealthCheck(snap.name, snap)
+        if not faults == nil then
+            fixInventory(faults, snap, snap.name, snap.supplier)
         end
     end
 end
-main()
