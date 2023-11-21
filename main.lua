@@ -19,7 +19,11 @@ function snapshot(invName, supplierName)
     io.output(folder .. invName)
     
     for _, value in pairs(snapshot) do
-        io.write(value.name .. "\n")
+        if value == nil then
+            io.write("\n")
+        else
+            io.write(value.name .. "\n")
+        end
     end
     io.write(invName .. "\n")
     io.write(supplierName)
@@ -30,7 +34,11 @@ end
 function readLines(name)
     local lineList = {}
     for line in io.lines(folder .. name) do
-        table.insert(lineList, line)
+        if line == "" then
+            table.insert(lineList, nil)
+        else
+            table.insert(lineList, line)
+        end
     end
     return lineList
 end
@@ -52,41 +60,72 @@ function getSnapshots()
     return snaps
 end
 
+function slotMatchTemplate(invSlot, slotTemplate)
+    if invSlot == nil and slotTemplate == nil then
+        return true
+    end
+    if invSlot == nil then
+        return false
+    end
+    return invSlot.name == slotTemplate
+end
+
 function healthCheck(inv, slotsTemplate) 
     local faults = {}
     local invSlots = inv.list()
 
     for i = 1, inv.size(), 1 do
-        if invSlots[i] == nil and slotsTemplate[i] == nil then
-            goto continue
+        if not slotMatchTemplate(invSlots[i], slotsTemplate[i]) then
+            table.insert(faults, i)
         end
-        if not invSlots[i] == nil then
-            if invSlots[i].name == slotsTemplate[i] then
-                goto continue
-            end
+    end
+end
+
+function findSlotWith(itemName, invName)
+    local inv = peripheral.wrap(invName)
+    for slotNr, slot in pairs(inv.list()) do
+        if slotMatchTemplate(slot, itemName) then
+            return slotNr
         end
-        table.insert(faults, key)
-        ::continue::
+    end
+end
+
+function emptySlot(slotNr, inv, supplier)
+    if not inv.getItemDetail(slotNr) == nil then
+        inv.pushItems(supplier, slotNr)
+    end
+end
+
+function fillSlot(slotNr, itemName, inv, supplier)
+    inv.pullItems(
+        supplier,
+        findSlotWith(itemName, supplier),
+        1,
+        slotNr
+    )
+end
+
+function fixSlots(faults, slotsTemplate, inv, supplier)
+    for _, slot in ipairs(faults) do
+        print(slot)
+        --emptySlot(slot, inv, supplier)
+        --fillSlot(slot, slotsTemplate[slot], inv, supplier)
     end
 end
 
 function maintain()
     local snapshots = getSnapshots()
-    for _, x in ipairs(snapshots) do
-        for key, y in pairs(x) do
-            print(key, ": ", y)
-        end
-    end
-    for _, snap in ipairs(snapshots) do
-        local inv = peripheral.wrap(snap.name)
-        local supplier = peripheral.wrap(snap.supplier)
-
-        local faults = healthCheck(inv, snap)
-        if not faults == nil then
-            for _, value in ipairs(faults) do
-                print(value)
+    while true do
+        for _, snap in ipairs(snapshots) do
+            local inv = peripheral.wrap(snap.name)
+            --local supplier = peripheral.wrap(snap.supplier)
+    
+            local faults = healthCheck(inv, snap)
+            if not faults == nil then
+                fixSlots(faults, snap, inv, snap.supplier)
             end
         end
+        break
     end
 end
 
