@@ -63,13 +63,14 @@ function GetSnapshots()
 end
 
 local function slotMatchTemplate(invSlot, slotTemplate)
+    print()
     if invSlot == nil and slotTemplate == nil then
         return true
-    end
-    if invSlot == nil then
+    elseif invSlot == nil then
         return false
+    elseif slotTemplate == nil then
+        return true
     end
-    print()
     return invSlot.name == slotTemplate.name
 end
 
