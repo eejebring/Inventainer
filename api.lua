@@ -93,19 +93,19 @@ local function findSlotWith(itemName, invName)
     end
 end
 
-local function emptySlot(slotNr, invName, supplier)
-    local inv = peripheral.wrap(invName)
+local function emptySlot(slotNr, snap)
+    local inv = peripheral.wrap(snap.name)
     if not (inv.getItemDetail(slotNr) == nil) then
-        inv.pushItems(supplier, slotNr)
+        inv.pushItems(snap.supplier, slotNr)
     end
 end
 
-local function fillSlot(slotNr, itemName, invName, supplier)
-    local inv = peripheral.wrap(invName)
-    local supplierSlot = findSlotWith(itemName, supplier)
+local function fillSlot(slotNr, snap)
+    local inv = peripheral.wrap(snap.name)
+    local supplierSlot = findSlotWith(snap.itemName, snap.supplier)
     if not (supplierSlot == nil) then
         inv.pullItems(
-            supplier,
+            snap.supplier,
             supplierSlot,
             1,
             slotNr
@@ -113,10 +113,33 @@ local function fillSlot(slotNr, itemName, invName, supplier)
     end
 end
 
+local function fillTransfer(slotNr, snap)
+    local firstEmptySlot = findSlotWith(nil, snap.name)
+    if not (firstEmptySlot == nil) then
+        if firstEmptySlot < slotNr then
+            return
+        end
+    end
+
+    local transfer = peripheral.wrap(snap.transfer)
+    local supplierSlot = findSlotWith(snap.itemName, snap.supplier)
+    transfer.pullItems(
+        snap.supplier,
+        supplierSlot,
+        1,
+        slotNr
+    )
+end
+
 local function fixInventory(faults, snap)
-    for _, slot in ipairs(faults) do
-        emptySlot(slot, snap.name, snap.supplier)
-        fillSlot(slot, snap.slots[slot], snap.name, snap.supplier)
+    if snap.transfer then
+        emptySlot(faults[1], snap)
+        fillTransfer(faults[1], snap)
+    else
+        for _, slot in ipairs(faults) do
+            emptySlot(slot, snap)
+            fillSlot(slot, snap)
+        end
     end
 end
 
@@ -135,7 +158,7 @@ function HealthCheckAll()
     local faultyInventories = {}
     for _, snap in ipairs(snapshots) do
         local faults = HealthCheck(snap.name, snap)
-        if not faults == nil then
+        if #faults then
             table.insert( faultyInventories, snap.name)
         end
     end
