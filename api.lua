@@ -73,13 +73,13 @@ local function slotMatchTemplate(invSlot, slotTemplate)
     return invSlot.name == slotTemplate.name
 end
 
-function HealthCheck(invName, slotsTemplate) 
+function HealthCheck(snap) 
     local faults = {}
-    local inv = peripheral.wrap(invName)
+    local inv = peripheral.wrap(snap.name)
     local invSlots = inv.list()
 
     for i = 1, inv.size(), 1 do
-        if not slotMatchTemplate(invSlots[i], slotsTemplate[i]) then
+        if not slotMatchTemplate(invSlots[i], snap.slots[i]) then
             table.insert(faults, i)
         end
     end
@@ -152,7 +152,7 @@ end
 function FixAllInventories()
     local snapshots = GetSnapshots()
     for _, snap in ipairs(snapshots) do
-        local faults = HealthCheck(snap.name, snap.slots)
+        local faults = HealthCheck(snap)
         if 0 < #faults then
             fixInventory(faults, snap)
         end
@@ -163,7 +163,7 @@ function HealthCheckAll()
     local snapshots = GetSnapshots()
     local faultyInventories = {}
     for _, snap in ipairs(snapshots) do
-        local faults = HealthCheck(snap.name, snap)
+        local faults = HealthCheck(snap)
         if 0 < #faults then
             table.insert( faultyInventories, snap.name)
         end
