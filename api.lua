@@ -53,7 +53,7 @@ function GetSnapshots()
     local fileNames = fs.list(folder)
     local snaps = {}
     for _, fileName in ipairs(fileNames) do
-        io.input(fileName)
+        io.input(folder .. fileName)
         local snapData = textutils.unserialise(
             io.read()
         )
