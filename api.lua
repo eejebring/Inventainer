@@ -95,7 +95,7 @@ end
 
 local function emptySlot(slotNr, invName, supplier)
     local inv = peripheral.wrap(invName)
-    if not inv.getItemDetail(slotNr) == nil then
+    if not (inv.getItemDetail(slotNr) == nil) then
         inv.pushItems(supplier, slotNr)
     end
 end
@@ -103,7 +103,7 @@ end
 local function fillSlot(slotNr, itemName, invName, supplier)
     local inv = peripheral.wrap(invName)
     local supplierSlot = findSlotWith(itemName, supplier)
-    if not supplierSlot == nil then
+    if not (supplierSlot == nil) then
         inv.pullItems(
             supplier,
             supplierSlot,
@@ -124,7 +124,7 @@ function FixAllInventories()
     local snapshots = GetSnapshots()
     for _, snap in ipairs(snapshots) do
         local faults = HealthCheck(snap.name, snap.slots)
-        if not faults == nil then
+        if #faults then
             fixInventory(faults, snap)
         end
     end
