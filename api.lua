@@ -63,13 +63,12 @@ function GetSnapshots()
 end
 
 local function slotMatchTemplate(invSlot, slotTemplate)
-    print()
     if invSlot == nil and slotTemplate == nil then
         return true
     elseif invSlot == nil then
         return false
     elseif slotTemplate == nil then
-        return true
+        return false
     end
     return invSlot.name == slotTemplate.name
 end
@@ -88,10 +87,10 @@ function HealthCheck(invName, slotsTemplate)
     return faults
 end
 
-local function findSlotWith(itemName, invName)
+local function findSlotWith(item, invName)
     local inv = peripheral.wrap(invName)
     for slotNr, slot in pairs(inv.list()) do
-        if slotMatchTemplate(slot, itemName) then
+        if slotMatchTemplate(slot, item) then
             return slotNr
         end
     end
@@ -106,7 +105,7 @@ end
 
 local function fillSlot(slotNr, snap)
     local inv = peripheral.wrap(snap.name)
-    local supplierSlot = findSlotWith(snap.itemName, snap.supplier)
+    local supplierSlot = findSlotWith(snap.slots[slotNr], snap.supplier)
     if not (supplierSlot == nil) then
         inv.pullItems(
             snap.supplier,
@@ -121,17 +120,18 @@ local function fillTransfer(slotNr, snap)
     local firstEmptySlot = findSlotWith(nil, snap.name)
     if not (firstEmptySlot == nil) then
         if firstEmptySlot < slotNr then
+            print("Warning transfer unsuccesful: blocking empty slot at: ", firstEmptySlot)
             return
         end
     end
 
     local transfer = peripheral.wrap(snap.transfer)
-    local supplierSlot = findSlotWith(snap.itemName, snap.supplier)
+    local supplierSlot = findSlotWith(snap.slots[slotNr], snap.supplier)
     transfer.pullItems(
         snap.supplier,
         supplierSlot,
         1,
-        slotNr
+        1
     )
 end
 
