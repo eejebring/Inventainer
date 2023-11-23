@@ -1,33 +1,37 @@
 local folder = "Inventainer/inv/"
 
-function Snapshot(invName, supplierName)
+function Snapshot(invName, supplierName, transferName)
 
-    local newPeripheral = peripheral.wrap(invName)
-    if (newPeripheral == nil) then
+    if peripheral.wrap(invName) == nil then
         print("invalid peripheral")
         return
     end
 
-    local supplier = peripheral.wrap(supplierName)
-    if supplier == nil then
+    if peripheral.wrap(supplierName) == nil then
         print("invalid supplier")
         return
     end
 
-    local snapshot = newPeripheral.list()
-
-    io.output(folder .. invName)
-    
-    for _, value in pairs(snapshot) do
-        if value == nil then
-            io.write("\n")
-        else
-            io.write(value.name .. "\n")
+    if transferName then
+        if peripheral.wrap(transferName) == nil then
+            print("invalid transferName")
+            return
         end
     end
-    io.write(invName .. "\n")
-    io.write(supplierName)
 
+    local snapshot = newPeripheral.list()
+
+    local snapData = {
+        ["name"] = invName,
+        ["supplier"] = supplierName,
+        ["transfer"] = transferName,
+        ["slots"] = snapshot
+    }
+
+    io.output(folder .. invName)
+    io.write(
+        textutils.serialise(snapData)
+    )
     io.close()
 end
 
@@ -47,15 +51,11 @@ function GetSnapshots()
     local fileNames = fs.list(folder)
     local snaps = {}
     for _, fileName in ipairs(fileNames) do
-        local snapData = readLines(fileName)
-        local supplierName = table.remove(snapData)
-        local invName = table.remove(snapData)
-        local snapObject = {
-            ["name"] = invName,
-            ["supplier"] = supplierName,
-            ["slots"] = snapData
-        }
-        table.insert(snaps, snapObject)
+        io.input(fileName)
+        local snapData = textutils.unserialise(
+            io.read()
+        )
+        table.insert(snaps, snapData)
     end
     return snaps
 end
