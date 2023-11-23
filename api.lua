@@ -129,3 +129,15 @@ function FixAllInventories()
         end
     end
 end
+
+function HealthCheckAll()
+    local snapshots = GetSnapshots()
+    local faultyInventories = {}
+    for _, snap in ipairs(snapshots) do
+        local faults = HealthCheck(snap.name, snap)
+        if not faults == nil then
+            table.insert( faultyInventories, snap.name)
+        end
+    end
+    return faultyInventories
+end

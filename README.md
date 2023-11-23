@@ -19,7 +19,10 @@ tries to make the inventories resemble the snapshots.
 tries to order all snapshoted inventories back to their snapshotted state.
 
 ## HealthCheck(invName, slotsTemplate)
-Compairs an inventory against a template and returns all descrepencies.
+Compairs an inventory against a template and returns a list of all faulty slots.
+
+## HealthCheckAll()
+Returns a list of all unhealthy inventories.
 
 ## GetSnapshots()
 Returns a table with data about all snapshoted inventories
