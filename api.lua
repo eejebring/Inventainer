@@ -137,8 +137,10 @@ end
 
 local function fixInventory(faults, snap)
     if snap.transfer then
-        emptySlot(faults[1], snap)
-        fillTransfer(faults[1], snap)
+        if faults then
+            emptySlot(faults[1], snap)
+            fillTransfer(faults[1], snap)
+        end
     else
         for _, slot in ipairs(faults) do
             emptySlot(slot, snap)
