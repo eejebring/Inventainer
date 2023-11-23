@@ -32,7 +32,7 @@ function Snapshot(invName, supplierName, transferName)
 
     io.output(folder .. invName)
     io.write(
-        textutils.serialise(snapData)
+        textutils.serialise(snapData, { compact = true })
     )
     io.close()
 end
@@ -70,7 +70,8 @@ local function slotMatchTemplate(invSlot, slotTemplate)
     if invSlot == nil then
         return false
     end
-    return invSlot.name == slotTemplate
+    print()
+    return invSlot.name == slotTemplate.name
 end
 
 function HealthCheck(invName, slotsTemplate) 
