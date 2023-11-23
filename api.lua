@@ -2,7 +2,9 @@ local folder = "Inventainer/inv/"
 
 function Snapshot(invName, supplierName, transferName)
 
-    if peripheral.wrap(invName) == nil then
+    local newPeripheral = peripheral.wrap(invName)
+
+    if newPeripheral == nil then
         print("invalid peripheral")
         return
     end
