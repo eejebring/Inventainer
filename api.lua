@@ -59,7 +59,6 @@ function GetSnapshots()
         )
         table.insert(snaps, snapData)
     end
-    io.close()
     return snaps
 end
 
