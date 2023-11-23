@@ -152,7 +152,7 @@ function FixAllInventories()
     local snapshots = GetSnapshots()
     for _, snap in ipairs(snapshots) do
         local faults = HealthCheck(snap.name, snap.slots)
-        if #faults then
+        if 0 < #faults then
             fixInventory(faults, snap)
         end
     end
@@ -163,7 +163,7 @@ function HealthCheckAll()
     local faultyInventories = {}
     for _, snap in ipairs(snapshots) do
         local faults = HealthCheck(snap.name, snap)
-        if #faults then
+        if 0 < #faults then
             table.insert( faultyInventories, snap.name)
         end
     end
