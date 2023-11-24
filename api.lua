@@ -106,7 +106,7 @@ end
 local function fillSlot(slotNr, snap)
     local inv = peripheral.wrap(snap.name)
     local supplierSlot = findSlotWith(snap.slots[slotNr], snap.supplier)
-    if not (supplierSlot == nil) then
+    if supplierSlot then
         inv.pullItems(
             snap.supplier,
             supplierSlot,
@@ -127,12 +127,14 @@ local function fillTransfer(slotNr, snap)
 
     local transfer = peripheral.wrap(snap.transfer)
     local supplierSlot = findSlotWith(snap.slots[slotNr], snap.supplier)
-    transfer.pullItems(
-        snap.supplier,
-        supplierSlot,
-        1,
-        1
-    )
+    if supplierSlot then
+        transfer.pullItems(
+            snap.supplier,
+            supplierSlot,
+            1,
+            1
+        )
+    end
 end
 
 local function fixInventory(faults, snap)
