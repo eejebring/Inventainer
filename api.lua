@@ -76,6 +76,10 @@ end
 function HealthCheck(snap) 
     local faults = {}
     local inv = peripheral.wrap(snap.name)
+    if inv == nil then
+        print(snap.name, "is not a valid peripheral")
+        return {}
+    end
     local invSlots = inv.list()
 
     for i = 1, inv.size(), 1 do
